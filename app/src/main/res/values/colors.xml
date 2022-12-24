@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--TODO Tambahkan warna di bawah ini untuk colors.xml-->
+    <!--warna ini digunakan ketika aplikasi berada dalam light mode-->
+    <color name="textColorButton">#000000</color>nanda
+    <color name="textColorButtonLoginRegister">#BCDBF4</color>
+    <color name="textColorButtonTabLayout">#0027FF</color>
+    <color name="textColorScreenLayout">#62C8F7</color>
+    <color name="backgroundLoginRegister">#002F55</color>
+    <color name="textColorSearch">#00158B</color>
+    <color name="backgroundFloating">#0027FF</color>
+    <color name="textColorEmpty">#0027FF</color>
+    <color name="thumbTintMoon">#000000</color>
+    <color name="blackDoffColor">#ffffff</color>
+    <color name="greyColor">#f9f9f9</color>
+    <color name="blueTrack">#206B7E</color>
+    <color name="blue">#2D4DFB</color>
+    <color name="green">#00FF0A</color>
+    <color name="red">#FF0000</color>
+    <color name="dark_gray">#9E9E9E</color>
+    <color name="txt_gray">@color/dark_gray</color>
+    <color name="textColorFloating">#83C8FF</color>
+    <color name="textColorTitle">#005EA9</color>
+    <color name="backgroundColor">#004C89</color>
+    <color name="backgroundColorDetail">#004C89</color>
+    <color name="backgroundClick">#350092</color>
+    <color name="backgroundColorButton">#008CFF</color>
+    <color name="backgroundColorFloating">#008DFF</color>
+    <color name="backgroundToolbar">#008EFF</color>
+    <color name="backgroundCardView">#3195E4</color>
+    <color name="backgroundIcon">#006BBF</color>
+    <color name="backgroundScreen">#4995D2</color>
+</resources>

@@ -1,0 +1,122 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace 'com.nandaadisaputra.github'
+    compileSdk 33
+
+    defaultConfig {
+        //Configuration Core Crocodic
+        configurations.all {
+            resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
+        }
+
+        applicationId "com.nandaadisaputra.github"
+        minSdk 23
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [usesCleartextTraffic: false, crashlyticsEnabled: true, performanceEnabled: true]
+        }
+        debug {
+            debuggable true
+            manifestPlaceholders = [usesCleartextTraffic: true, crashlyticsEnabled: false, performanceEnabled: false]
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+    //Core Crocodic
+    implementation 'com.github.crocodic-studio:AndroidCoreProject:4.0.7'
+    implementation 'com.github.yzzzd:androidcore-lite:1.0.0'
+    //Hilt
+    implementation 'com.google.dagger:hilt-android:2.44'
+    implementation 'androidx.navigation:navigation-runtime-ktx:2.5.3'
+    kapt 'com.google.dagger:hilt-compiler:2.44'
+    // required to avoid crash on Android 12 API 31
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    //image slider
+    implementation 'com.daimajia.slider:library:1.1.5@aar'
+    implementation 'com.squareup.picasso:picasso:2.3.2'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    //swipe refresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    //Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha03"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.5.1"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
+    //Room
+    implementation 'androidx.room:room-ktx:2.4.3'
+    kapt 'androidx.room:room-compiler:2.4.3'
+    //Rounded Image
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    //RxAndroid
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.0'
+    //ssp dan sdp
+    implementation 'com.intuit.ssp:ssp-android:1.1.0'
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    // Datastore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+    // LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03")
+    // Skeleton
+    implementation "com.github.rasoulmiri:Skeleton:1.0.9"
+    // Corountine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    //CardView
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "com.google.android.material:material:1.8.0-beta01"
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.0.2')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-iid:21.1.0'
+    //CircleImage
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+}

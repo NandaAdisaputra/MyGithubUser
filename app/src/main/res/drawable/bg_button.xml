@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--TODO buat resource dengan nama background_button.xml di dalam package drawable-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--TODO Ketika Button ada aksi klik akan menampilkan warna blue -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/backgroundColor" />
+            <corners android:radius="@dimen/_100sdp"/>
+            <stroke android:color="@color/white"
+                android:width="@dimen/_1sdp"/>
+            <corners android:radius="@dimen/_50sdp" />
+        </shape>
+    </item>
+    <!--TODO Ketika Button tidak ada aksi klik akan menampilkan warna indigo -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/backgroundLoginRegister"/>
+            <corners android:radius="@dimen/_100sdp"/>
+            <stroke android:color="@color/white"
+                android:width="@dimen/_1sdp"/>
+            <corners android:radius="@dimen/_50sdp" />
+        </shape>
+    </item>
+</selector>
+
+
+

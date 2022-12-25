@@ -1,6 +1,7 @@
 # Repository Hasil Belajar Kelas Fundamental Aplikasi Android Dicoding
 **Silahkan gunakan sebagai referensi, namun tetap jangan sampai plagiat ya!**
 Sesuai dengan termsofuse yang ada pada halaman https://www.dicoding.com/termsofuse terkait <a href='https://www.dicoding.com/blog/plagiarisme/'>Plagiarisme</a>
+
 Pada Aplikasi ini telah menerapkan
 1. Dependency Injection Hilt
 2. MVVM ( Model , View, ViewModel )

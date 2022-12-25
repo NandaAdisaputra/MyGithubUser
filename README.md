@@ -14,3 +14,6 @@ Pada Aplikasi ini telah menerapkan
 9. Image Slider, Intent with Parceable, Tab Layout View Pager, dan Fragment 
 10. Swipe Refresh, RecyclerView, CardView, dan ConstraintLayout
 11. Localization, Dark Mode dan Light Mode dengan mempertahankan theme nya ketika on destroy. 
+
+====================
+![sertifikat kompetensi](https://user-images.githubusercontent.com/43689759/209481828-74987edd-2d98-4507-bb18-826078e39a15.jpg)

@@ -32,9 +32,9 @@
     <color name="backgroundColor">#004C89</color>
     <color name="backgroundColorDetail">#004C89</color>
     <color name="backgroundClick">#350092</color>
-    <color name="backgroundColorButton">#008CFF</color>
+    <color name="backgroundColorButton">#33A3FF</color>
     <color name="backgroundColorFloating">#008DFF</color>
-    <color name="backgroundToolbar">#008EFF</color>
+    <color name="backgroundToolbar">#0063B1</color>
     <color name="backgroundCardView">#3195E4</color>
     <color name="backgroundIcon">#006BBF</color>
     <color name="backgroundScreen">#4995D2</color>

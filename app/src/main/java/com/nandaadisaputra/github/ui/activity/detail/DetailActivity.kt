@@ -5,17 +5,16 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.crocodic.core.extension.openActivity
-import com.crocodic.core.extension.tos
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.nandaadisaputra.github.R
 import com.nandaadisaputra.github.adapter.ViewPagerAdapter
 import com.nandaadisaputra.github.base.activity.BaseActivity
 import com.nandaadisaputra.github.data.constant.Const
+import com.nandaadisaputra.github.data.room.user.UsersEntity
+import com.nandaadisaputra.github.data.room.user.detail.DetailUserEntity
 import com.nandaadisaputra.github.databinding.ActivityDetailBinding
 import com.nandaadisaputra.github.ui.activity.favorite.FavoriteActivity
 import com.nandaadisaputra.github.ui.activity.settings.SettingsActivity
@@ -30,8 +29,9 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class DetailActivity :
     BaseActivity<ActivityDetailBinding, DetailViewModel>(R.layout.activity_detail) {
-
     companion object {
+        const val EXTRA_USER = "extra_user"
+
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.followers,
@@ -44,68 +44,64 @@ class DetailActivity :
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         binding.activity = this
-        observe()
         initPageAdapter()
         initAppbar()
         darkMode()
-        favorite()
-    }
-    private fun observe() {
-        viewModel.getUserDetail().observe(this) {
-            Const.Cons.NULL
-            if (it != null) {
-                binding.apply {
-                    tvDetailLogin.text = it.login
-                    tvDetailName.text = it.name
-                    tvDetailBio.text = it.bio
-                    tvFollower.text = it.followers.toString()
-                    tvFollowing.text = it.following.toString()
-                    tvRepository.text = it.public_repos.toString()
-                    tvDetailLocation.text = it.location
-                    ForGlide.loadImage( ivDetailImage,it.image,)
-                }
-            }else{
-                showEmpty(true)
-            }
-
-        }
-    }
-    private fun favorite(){
-        val id = intent.getIntExtra(Const.User.D_ID, 0)
-        val avatar = intent.getStringExtra(Const.User.D_AVATAR)
+        val user = intent.getParcelableExtra<UsersEntity>(EXTRA_USER) as UsersEntity
+        user.login?.let { setupViewModel(it) }
+        val avatar = user.avatar.toString()
+        val username = user.login.toString()
         var isFavorite = false
-        val username = intent.getStringExtra(Const.User.D_USERNAME)
-        username?.let { viewModel.setUserDetail(it) }
-        if (username != null) {
-            viewModel.setUserDetail(username)
-        }
-        val bundle = Bundle()
-        bundle.putString(Const.User.D_USERNAME, username)
         CoroutineScope(Dispatchers.IO).launch {
-            val count = viewModel.checkUser(id)
+            val count = user.id?.let { viewModel.checkUser(it) }
             withContext(Dispatchers.Main) {
-                if (count > 0) {
-                    setStatusFavorite(true)
-                    isFavorite = true
-                } else {
-                    setStatusFavorite(false)
+                if (count != null) {
+                    if (count > 0) {
+                        setStatusFavorite(true)
+                        isFavorite = true
+                    } else {
+                        setStatusFavorite(false)
+                    }
                 }
             }
         }
         binding.fabFavorite.setOnClickListener {
             isFavorite = !isFavorite
             if (isFavorite) {
-                if (username != null) {
-                    viewModel.addToFavorite(username, id, avatar)
-                }
+                user.id?.let { it1 -> viewModel.addToFavorite(username, it1, avatar) }
                 loadingDialog.setResponse(Const.Likes.LOADING_LIKE, R.drawable.ic_favorite)
             } else {
                 loadingDialog.setResponse(Const.Likes.LOADING_UNLIKE, R.drawable.ic_favorite_border)
-                viewModel.removeFromFavorite(id)
+                user.id?.let { it1 -> viewModel.removeFromFavorite(it1) }
             }
             setStatusFavorite(isFavorite)
         }
     }
+
+    private fun setupViewModel(username: String) {
+        viewModel.setUserDetail(username)
+        viewModel.user.observe(this) {
+            userDetail(it)
+        }
+    }
+
+    private fun userDetail(detailUserEntity: DetailUserEntity) {
+        viewModel.getUserDetail().observe(this) {
+            Const.Cons.NULL
+            binding.apply {
+                tvDetailLogin.text = detailUserEntity.login
+                tvDetailName.text = detailUserEntity.name
+                tvDetailBio.text = detailUserEntity.bio
+                tvFollower.text = detailUserEntity.followers.toString()
+                tvFollowing.text = detailUserEntity.following.toString()
+                tvRepository.text = detailUserEntity.public_repos.toString()
+                tvDetailLocation.text = detailUserEntity.location
+                ForGlide.loadImage(ivDetailImage, detailUserEntity.image)
+            }
+
+        }
+    }
+
     private fun darkMode() {
         viewModel.getTheme.observe(this) { isDarkMode ->
             checkDarkMode(isDarkMode)
@@ -125,7 +121,7 @@ class DetailActivity :
 
     override fun onDestroy() {
         super.onDestroy()
-        observe()
+        setupViewModel(username = String())
     }
 
     private fun initAppbar() {
@@ -172,8 +168,5 @@ class DetailActivity :
             binding.fabFavorite.text = Const.Likes.UN_LIKE
         }
     }
-    private fun showEmpty(state: Boolean) {
-        binding.vEmpty.isVisible = state
-        binding.detail.isGone = state
-    }
+
 }

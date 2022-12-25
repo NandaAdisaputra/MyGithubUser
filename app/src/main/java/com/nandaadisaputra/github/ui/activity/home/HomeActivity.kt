@@ -49,9 +49,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                 R.layout.item_user)
                 .initItem(users) { position, data ->
                     openActivity<DetailActivity> {
-                        putExtra(Const.User.D_USERNAME, data?.login)
-                        putExtra(Const.User.D_ID, data?.id)
-                        putExtra(Const.User.D_AVATAR, data?.avatar)
+                        putExtra(DetailActivity.EXTRA_USER, data)
                     }
                 }
             viewModel.getSearchUsers()

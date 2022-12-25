@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.crocodic.core.extension.openActivity
 import com.nandaadisaputra.github.R
 import com.nandaadisaputra.github.base.fragment.BaseFragment
-import com.nandaadisaputra.github.data.constant.Const
 import com.nandaadisaputra.github.data.room.user.UsersEntity
 import com.nandaadisaputra.github.databinding.FragmentFollowingBinding
 import com.nandaadisaputra.github.databinding.ItemUserBinding
@@ -19,52 +18,59 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FollowingFragment : BaseFragment<FragmentFollowingBinding>(R.layout.fragment_following) {
-    private val following = ArrayList<UsersEntity?>()
+    private val followingUser = ArrayList<UsersEntity?>()
     private lateinit var viewModel: FollowingViewModel
-    private lateinit var username: String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this@FollowingFragment)[FollowingViewModel::class.java]
         binding?.lifecycleOwner = viewLifecycleOwner
         binding?.viewModel = viewModel
+        val extraUser =
+            activity?.intent?.getParcelableExtra<UsersEntity>(DetailActivity.EXTRA_USER) as UsersEntity
+        extraUser.login?.let { setupViewModel(it) }
+        setupRecyclerView()
+        initAdapter()
+    }
 
-        val arg = arguments
-        username = arg?.getString(Const.User.D_USERNAME).toString()
-        viewModel.listFollowing.observe(viewLifecycleOwner) {
+    private fun initAdapter() {
+        viewModel.following.observe(viewLifecycleOwner) {
             binding?.adapter = CoreListAdapter<ItemUserBinding, UsersEntity>(
                 R.layout.item_user
             )
-                .initItem(following) { position, data ->
+                .initItem(followingUser) { position, data ->
                     context?.openActivity<DetailActivity> {
-                        putExtra(Const.User.D_USERNAME, data?.login)
-                        putExtra(Const.User.D_ID, data?.id)
-                        putExtra(Const.User.D_AVATAR, data?.avatar)
+                        putExtra(DetailActivity.EXTRA_USER, data)
                     }
                 }
-            viewModel.getListFollowing()
         }
+    }
+
+    private fun setupRecyclerView() {
         binding?.apply {
             rvFollowing.layoutManager = LinearLayoutManager(activity)
             rvFollowing.setHasFixedSize(true)
         }
+    }
+
+    private fun setupViewModel(username: String) {
         viewModel.apply {
             setListFollowing(username)
             fun setList(user: ArrayList<UsersEntity>) {
-                following.clear()
-                following.addAll(user)
+                followingUser.clear()
+                followingUser.addAll(user)
                 binding?.rvFollowing?.adapter?.notifyDataSetChanged()
             }
             getListFollowing().observe(viewLifecycleOwner) {
                 if (it != null) {
                     setList(it)
-                } else{
+                }
+                if (it.isEmpty()) {
                     showEmpty(true)
                 }
             }
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null

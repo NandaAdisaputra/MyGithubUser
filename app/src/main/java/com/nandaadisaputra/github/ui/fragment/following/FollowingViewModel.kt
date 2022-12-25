@@ -20,18 +20,19 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowingViewModel @Inject constructor(private val apiService: ApiService, private val dataStorePreference: DataStorePreference): BaseViewModel() {
     val showLoading = MutableLiveData<Boolean>()
-    val listFollowing = MutableLiveData<ArrayList<UsersEntity>>()
+    private val _following = MutableLiveData<ArrayList<UsersEntity>>()
+    val following: MutableLiveData<ArrayList<UsersEntity>> = _following
 
     fun setListFollowing(username: String) {
         showLoading.postValue(true)
         apiService.getFollowing(username)
-            .enqueue(object : Callback<ArrayList<UsersEntity>>{
+            .enqueue(object : Callback<ArrayList<UsersEntity>> {
                 override fun onResponse(
                     call: Call<ArrayList<UsersEntity>>,
                     response: Response<ArrayList<UsersEntity>>
                 ) {
-                    if (response.isSuccessful){
-                        listFollowing.postValue(response.body())
+                    if (response.isSuccessful) {
+                        following.postValue(response.body())
                         showLoading.postValue(false)
                     }
                 }
@@ -44,7 +45,7 @@ class FollowingViewModel @Inject constructor(private val apiService: ApiService,
     }
 
     fun getListFollowing() : LiveData<ArrayList<UsersEntity>>{
-        return listFollowing
+        return following
     }
     val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
 

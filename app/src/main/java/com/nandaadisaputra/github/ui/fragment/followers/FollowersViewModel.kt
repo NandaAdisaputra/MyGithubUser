@@ -22,20 +22,21 @@ import javax.inject.Inject
 class FollowersViewModel @Inject constructor(
     private val apiService: ApiService,
     private val dataStorePreference: DataStorePreference
-): BaseViewModel() {
+) : BaseViewModel() {
+    private val _followers = MutableLiveData<ArrayList<UsersEntity>>()
+    val followers: MutableLiveData<ArrayList<UsersEntity>> = _followers
     val showLoading = MutableLiveData<Boolean>()
-    val listFollowers = MutableLiveData<ArrayList<UsersEntity>>()
 
     fun setListFollowers(username: String) {
         showLoading.postValue(true)
         apiService.getFollowers(username)
-            .enqueue(object : Callback<ArrayList<UsersEntity>>{
+            .enqueue(object : Callback<ArrayList<UsersEntity>> {
                 override fun onResponse(
                     call: Call<ArrayList<UsersEntity>>,
                     response: Response<ArrayList<UsersEntity>>
                 ) {
-                    if (response.isSuccessful){
-                        listFollowers.postValue(response.body())
+                    if (response.isSuccessful) {
+                        followers.postValue(response.body())
                         showLoading.postValue(false)
                     }
                 }
@@ -43,16 +44,15 @@ class FollowersViewModel @Inject constructor(
                 override fun onFailure(call: Call<ArrayList<UsersEntity>>, t: Throwable) {
                     Timber.d(t.message!!)
                 }
-
             })
     }
 
-    fun getListFollowers() : LiveData<ArrayList<UsersEntity>>{
-        return listFollowers
+    fun getListFollowers(): LiveData<ArrayList<UsersEntity>> {
+        return followers
     }
-    val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
 
-    fun setTheme(isDarkMode : Boolean) {
+    val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
+    fun setTheme(isDarkMode: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStorePreference.setTheme(isDarkMode)
         }

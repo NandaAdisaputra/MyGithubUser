@@ -12,7 +12,7 @@
         android:id="@+id/btn_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/_8sdp"
         android:backgroundTint="@color/backgroundColorButton"
         app:cardCornerRadius="@dimen/_15sdp"
         app:cardElevation="@dimen/_1sdp"
@@ -49,6 +49,8 @@
                 android:textColor="@color/textColorButton"
                 android:textSize="@dimen/_14ssp"
                 android:ellipsize="middle"
+                android:minLines="1"
+                android:maxLines="1"
                 app:fontFamily="@font/bold"
                 android:text='@{data.login}'
                 app:layout_constraintEnd_toEndOf="parent"

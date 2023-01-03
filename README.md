@@ -8,7 +8,7 @@ Pada Aplikasi ini telah menerapkan
 3. Room Database 
 4. Rest API dengan <a href='http://api.github.com/'>API GITHUB</a>
 5. DataSource dan Data Binding 
-6. Clean Arsitektur
+6. Android Architecture Component
 7. Repository
 8. RxJava dan Login Register with Corountine Library, Library Retrofit, dll
 9. Image Slider, Intent with Parceable, Tab Layout View Pager, dan Fragment 

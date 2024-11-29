@@ -9,7 +9,7 @@ import com.nandaadisaputra.github.data.room.favorite.FavoriteEntity
 import com.nandaadisaputra.github.data.room.favorite.FavoriteUsersDao
 
 @Database(entities = [
-    FavoriteEntity::class], version = 10, exportSchema = false)  // Menandai kelas ini sebagai database dengan entitas FavoriteEntity
+    FavoriteEntity::class], version = 11, exportSchema = false)  // Menandai kelas ini sebagai database dengan entitas FavoriteEntity
 abstract class UserDatabase : RoomDatabase() { // UserDatabase adalah kelas RoomDatabase yang mengatur akses ke data
 
     abstract fun favoriteDao(): FavoriteUsersDao // Mendeklarasikan DAO untuk FavoriteEntity

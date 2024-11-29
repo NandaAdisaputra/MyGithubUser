@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!-- Menambahkan izin untuk mengakses status jaringan -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Menambahkan izin untuk mengakses internet -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Menambahkan izin untuk mengakses status Wi-Fi -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <!-- Menambahkan izin untuk menulis database secara lokal -->
     <permission
         android:name="com.nandaadisaputra.github.WRITE_DATABASE"
         android:protectionLevel="normal" />
+    <!-- Menambahkan izin untuk membaca database secara lokal -->
     <permission
         android:name="com.nandaadisaputra.github.READ_DATABASE"
         android:protectionLevel="normal" />
@@ -20,23 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Github"
-        android:usesCleartextTraffic="${usesCleartextTraffic}">
-        <activity
-            android:name=".ui.activity.register.RegisterActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Github.NoActionBar">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ui.activity.login.LoginActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Github.NoActionBar">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+        android:usesCleartextTraffic="${usesCleartextTraffic}"> <!-- Mengatur apakah aplikasi mendukung lalu lintas teks terbuka (Cleartext) -->
+        <!-- Aktivitas untuk halaman favorit -->
+        <!-- Aktivitas ini tidak dapat diekspor untuk aplikasi lain -->
+        <!-- Tema yang digunakan untuk aktivitas ini -->
         <activity
             android:name=".ui.activity.favorite.FavoriteActivity"
             android:exported="false"
@@ -57,6 +48,7 @@
             android:name=".ui.activity.splash.SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.Github.NoActionBar.WindowBackground">
+            <!-- Menandakan aktivitas ini adalah yang pertama dijalankan saat aplikasi dimulai -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -7,32 +7,27 @@ import androidx.room.RoomDatabase
 import com.nandaadisaputra.github.data.constant.Const
 import com.nandaadisaputra.github.data.room.favorite.FavoriteEntity
 import com.nandaadisaputra.github.data.room.favorite.FavoriteUsersDao
-import com.nandaadisaputra.github.data.room.login.LoginDao
-import com.nandaadisaputra.github.data.room.login.LoginEntity
-
 
 @Database(entities = [
-    FavoriteEntity::class,
-    LoginEntity::class], version = 9, exportSchema = false)
-abstract class UserDatabase : RoomDatabase() {
+    FavoriteEntity::class], version = 10, exportSchema = false)  // Menandai kelas ini sebagai database dengan entitas FavoriteEntity
+abstract class UserDatabase : RoomDatabase() { // UserDatabase adalah kelas RoomDatabase yang mengatur akses ke data
 
-    abstract fun favoriteDao(): FavoriteUsersDao
-    abstract fun loginDao(): LoginDao
+    abstract fun favoriteDao(): FavoriteUsersDao // Mendeklarasikan DAO untuk FavoriteEntity
 
-    companion object {
+    companion object { // Companion object digunakan untuk membuat instance database secara singleton
         @Volatile
-        private var INSTANCE: UserDatabase? = null
+        private var INSTANCE: UserDatabase? = null // Properti instance untuk menyimpan referensi database
 
-        fun getDatabase(context: Context): UserDatabase {
-            return INSTANCE ?: synchronized(this) {
+        fun getDatabase(context: Context): UserDatabase {  // Fungsi untuk mendapatkan instance UserDatabase
+            return INSTANCE ?: synchronized(this) { // Jika INSTANCE belum ada, buat instance baru dengan Room
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    UserDatabase::class.java,
-                    Const.Cons.TAG
+                    context.applicationContext, // Menggunakan context aplikasi untuk menghindari kebocoran memori
+                    UserDatabase::class.java,// Menentukan kelas database
+                    Const.Cons.TAG // Nama database
                 )
-                    .fallbackToDestructiveMigration()
-                    .build()
-                INSTANCE = instance
+                    .fallbackToDestructiveMigration() // Menangani perubahan skema yang tidak dipetakan
+                    .build() // Membangun database
+                INSTANCE = instance // Menyimpan instance untuk penggunaan selanjutnya
                 instance
             }
         }

@@ -15,20 +15,24 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteViewModel @Inject constructor(application: Application, private val dataStorePreference: DataStorePreference) : BaseViewModel() {
-    private val mFavoriteRepository: UserRepository?
-    init {
-        mFavoriteRepository = UserRepository(application)
-    }
+class FavoriteViewModel @Inject constructor(
+    application: Application,
+    private val dataStorePreference: DataStorePreference
+) : BaseViewModel() {
 
+    // Menginisialisasi repository untuk mengakses data favorit
+    private val mFavoriteRepository: UserRepository? = UserRepository(application)
+
+    // Fungsi untuk mengambil semua data favorit
     fun getAllFavorites(): LiveData<List<FavoriteEntity>>? = mFavoriteRepository?.getAllFavorites()
+
+    // LiveData untuk mendapatkan status tema (gelap/terang) dari DataStore
     val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
 
-
-    fun setTheme(isDarkMode : Boolean) {
+    // Fungsi untuk mengatur tema (gelap/terang) dan menyimpannya ke DataStore
+    fun setTheme(isDarkMode: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.setTheme(isDarkMode)
+            dataStorePreference.setTheme(isDarkMode) // Menyimpan preferensi tema ke DataStore
         }
     }
-
 }

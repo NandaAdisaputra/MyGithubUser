@@ -8,7 +8,6 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.nandaadisaputra.github.api.ApiService
-import com.nandaadisaputra.github.api.ApiServiceTwo
 import com.nandaadisaputra.github.data.constant.Const
 import com.nandaadisaputra.github.data.room.database.UserDatabase
 import com.nandaadisaputra.github.datastore.DataStorePreference
@@ -27,88 +26,74 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 
-
-@InstallIn(SingletonComponent::class)
+// Modul Hilt untuk menyediakan dependensi yang diperlukan oleh aplikasi
+@InstallIn(SingletonComponent::class)  // Ini memastikan modul ini diinstal di level aplikasi (singleton)
 @Module
 class DataModule {
+    // Menyediakan instance UserDatabase yang akan digunakan di seluruh aplikasi
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context) = UserDatabase.getDatabase(context)
-
+    // Menyediakan instance FavoriteUsersDao yang digunakan untuk operasi CRUD pada tabel favorit
     @Provides
     fun provideFavoriteDao(appDatabase: UserDatabase) = appDatabase.favoriteDao()
-
-    @Provides
-    fun provideLoginDao(appDatabase: UserDatabase) = appDatabase.loginDao()
-
+    // Menyediakan instance Gson untuk konversi objek ke JSON dan sebaliknya
     @Provides
     fun provideGson(): Gson =
         GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create()
-
+    // Menyediakan instance CoreSession untuk sesi aplikasi (misalnya untuk mengambil token pengguna)
     @Provides
     fun provideSession(@ApplicationContext context: Context) = CoreSession(context)
-
+    // Menyediakan instance DataStorePreference untuk akses SharedPreferences melalui DataStore
     @Provides
     @Singleton
     fun providesDataStore(@ApplicationContext context: Context) : DataStorePreference {
         return DataStorePreference(context)
     }
+    // Menyediakan instance OkHttpClient untuk melakukan HTTP request dengan pengaturan SSL dan intersep token
     @Provides
     fun provideOkHttpClient(session: CoreSession): OkHttpClient {
-
+        // Membuat SSLContext dengan trust manager yang memungkinkan koneksi tidak aman
         val unsafeTrustManager = SSLTrust().createUnsafeTrustManager()
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, arrayOf(unsafeTrustManager), null)
 
         val okHttpClient = OkHttpClient().newBuilder()
-            .sslSocketFactory(sslContext.socketFactory, unsafeTrustManager)
-            .connectTimeout(90, TimeUnit.SECONDS)
-            .readTimeout(90, TimeUnit.SECONDS)
-            .writeTimeout(90, TimeUnit.SECONDS)
-            .addInterceptor { chain ->
+            .sslSocketFactory(sslContext.socketFactory, unsafeTrustManager) // Menggunakan custom SSLContext
+            .connectTimeout(90, TimeUnit.SECONDS)  // Timeout untuk koneksi
+            .readTimeout(90, TimeUnit.SECONDS) // Timeout untuk pembacaan data
+            .writeTimeout(90, TimeUnit.SECONDS) // Timeout untuk penulisan data
+            .addInterceptor { chain -> // Menambahkan interceptor untuk menambah header Authorization
                 val original = chain.request()
-                val token = session.getString(Const.TOKEN.API_TOKEN)
+                val token = session.getString(Const.TOKEN.API_TOKEN) // Mengambil token dari session
                 Timber.d("token: $token")
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "Bearer $token") // Menambahkan header Authorization
                     .method(original.method, original.body)
                 val request = requestBuilder.build()
-                chain.proceed(request)
+                chain.proceed(request)  // Melanjutkan permintaan dengan header yang sudah dimodifikasi
             }
-
+// Jika aplikasi dalam mode debug, menambahkan logging untuk melihat request/response
         if (BuildConfig.DEBUG) {
             val interceptors = HttpLoggingInterceptor()
-            interceptors.level = HttpLoggingInterceptor.Level.BODY
+            interceptors.level = HttpLoggingInterceptor.Level.BODY // Menampilkan body request/response
             okHttpClient.addInterceptor(interceptors)
         }
 
-        return okHttpClient.build()
+        return okHttpClient.build() // Membangun dan mengembalikan OkHttpClient
     }
-
+    // Menyediakan instance ApiService untuk komunikasi dengan API GitHub
     // TODO: add base url
     @Provides
     fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         val gson = GsonBuilder()
             .setLenient()
-            .create()
+            .create() // Membuat instance Gson dengan konversi lebih fleksibel
         return Retrofit.Builder()
-            .baseUrl("http://api.github.com/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build().create(ApiService::class.java)
-    }
-
-    @Provides
-    fun provideApiServiceTwo(okHttpClient: OkHttpClient): ApiServiceTwo {
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-        return Retrofit.Builder()
-            .baseUrl("https://story-api.dicoding.dev/v1/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build().create(ApiServiceTwo::class.java)
+            .baseUrl("http://api.github.com/") // URL dasar untuk API GitHub
+            .addConverterFactory(ScalarsConverterFactory.create()) // Menambahkan converter untuk tipe data skalar
+            .addConverterFactory(GsonConverterFactory.create(gson)) // Menambahkan converter untuk konversi JSON
+            .client(okHttpClient)  // Menggunakan OkHttpClient yang telah dikonfigurasi
+            .build().create(ApiService::class.java) // Membangun Retrofit dan membuat instance ApiService
     }
 }

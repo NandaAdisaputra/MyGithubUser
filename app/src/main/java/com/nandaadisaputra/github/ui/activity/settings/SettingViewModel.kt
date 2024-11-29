@@ -14,10 +14,13 @@ class SettingViewModel @Inject constructor(
     private val dataStorePreference: DataStorePreference
 ) : BaseViewModel() {
 
+    // LiveData untuk mengamati status tema (gelap/terang) yang disimpan di DataStore
     val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
 
-    fun setTheme(isDarkMode : Boolean) {
+    // Fungsi untuk menyimpan preferensi tema ke DataStore
+    fun setTheme(isDarkMode: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
+            // Menyimpan preferensi tema ke DataStore
             dataStorePreference.setTheme(isDarkMode)
         }
     }

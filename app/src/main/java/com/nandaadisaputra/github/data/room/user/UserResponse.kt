@@ -1,5 +1,6 @@
 package com.nandaadisaputra.github.data.room.user
 
 data class UserResponse(
-    val items : ArrayList<UsersEntity>
+    // Properti yang menyimpan daftar pengguna dalam bentuk ArrayList
+    val items: ArrayList<UsersEntity>
 )

@@ -25,68 +25,89 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    application: Application,
-    private val apiService: ApiService,
-    private val dataStorePreference: DataStorePreference
+    application: Application, // Menyuntikkan objek Application untuk akses ke resources aplikasi
+    private val apiService: ApiService, // Menggunakan ApiService untuk memanggil API
+    private val dataStorePreference: DataStorePreference // Menggunakan DataStore untuk menyimpan preferensi pengguna
 ) : BaseViewModel() {
+
+    // LiveData untuk menunjukkan status loading
     val showLoading = MutableLiveData<Boolean>()
+
+    // Variabel untuk mengakses DAO dari database favorit
     private var favoriteUsersDAO: FavoriteUsersDao?
+
+    // Repository untuk mengakses data pengguna
     private val mFavoriteRepository: UserRepository = UserRepository(application)
-    private var favoriteUserDatabase: UserDatabase? =
-        UserDatabase.getDatabase(application)
+
+    // Mengakses database untuk operasi terkait favorit
+    private var favoriteUserDatabase: UserDatabase? = UserDatabase.getDatabase(application)
+
+    // Inisialisasi DAO dan database favorit
     init {
         favoriteUsersDAO = favoriteUserDatabase?.favoriteDao()
     }
 
+    // LiveData untuk menyimpan data detail pengguna
     val user = MutableLiveData<DetailUserEntity>()
+
+    // Fungsi untuk mengambil detail pengguna berdasarkan username
     fun setUserDetail(username: String) {
-        showLoading.postValue(true)
+        showLoading.postValue(true) // Menampilkan loading sebelum mengambil data
         apiService.getUserDetail(username)
             .enqueue(object : Callback<DetailUserEntity> {
                 override fun onResponse(
                     call: Call<DetailUserEntity>,
                     response: Response<DetailUserEntity>
                 ) {
+                    // Jika respon API berhasil, simpan data ke LiveData
                     if (response.isSuccessful) {
                         user.postValue(response.body())
-                        showLoading.postValue(false)
+                        showLoading.postValue(false) // Sembunyikan loading setelah data diterima
                     }
                 }
 
                 override fun onFailure(call: Call<DetailUserEntity>, t: Throwable) {
-                    Timber.d(t.message!!)
+                    // Menangani kegagalan API, misalnya koneksi jaringan error
+                    Timber.d(t.message!!) // Log error
                 }
-
             })
     }
 
+    // Mengembalikan data detail pengguna dalam bentuk LiveData
     fun getUserDetail(): LiveData<DetailUserEntity> {
         return user
     }
 
+    // Mengecek apakah pengguna sudah ada di daftar favorit berdasarkan ID
     fun checkUser(id: Int) = mFavoriteRepository.check(id)
 
+    // Menambahkan pengguna ke daftar favorit
     fun addToFavorite(username: String, id: Int, avatarUrl: String?) {
         CoroutineScope(Dispatchers.IO).launch {
+            // Menyimpan data favorit ke database
             val user = FavoriteEntity(
                 id,
                 avatarUrl,
                 username
             )
-            mFavoriteRepository.insert(user)
+            mFavoriteRepository.insert(user) // Menyimpan data ke database
         }
     }
 
+    // Menghapus pengguna dari daftar favorit
     fun removeFromFavorite(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            mFavoriteRepository.delete(id)
+            mFavoriteRepository.delete(id) // Menghapus data dari database
         }
     }
+
+    // Mengambil pengaturan tema (gelap/terang) dari DataStore
     val getTheme = dataStorePreference.getTheme().asLiveData(Dispatchers.IO)
 
-    fun setTheme(isDarkMode : Boolean) {
+    // Menyimpan pengaturan tema (gelap/terang) ke DataStore
+    fun setTheme(isDarkMode: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.setTheme(isDarkMode)
+            dataStorePreference.setTheme(isDarkMode) // Menyimpan tema pilihan pengguna
         }
     }
 }
